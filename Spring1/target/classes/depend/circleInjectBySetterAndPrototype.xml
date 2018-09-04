@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+   
+   <bean id="circleA" class="com.spring.depend.CircleA" scope="prototype">
+        <property name="circleB" ref="circleB"/>
+   </bean>
+
+   <bean id="circleB" class="com.spring.depend.CircleB" scope="prototype">
+       <property name="circleC" ref="circleC"/>
+   </bean>
+
+   <bean id="circleC" class="com.spring.depend.CircleC" scope="prototype">
+       <property name="circleA" ref="circleA"/>
+   </bean>
+          
+</beans>

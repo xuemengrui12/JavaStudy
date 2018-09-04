@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/IODemo/IODemo.iml" filepath="$PROJECT_DIR$/IODemo/IODemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaStudy.iml" filepath="$PROJECT_DIR$/JavaStudy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ReflectionDemo/ReflectionDemo.iml" filepath="$PROJECT_DIR$/ReflectionDemo/ReflectionDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Spring1/Spring1.iml" filepath="$PROJECT_DIR$/Spring1/Spring1.iml" />
+      <module fileurl="file://D:\Intellij\JavaStudy\Spring3\Spring1.iml" filepath="D:\Intellij\JavaStudy\Spring3\Spring1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Spring2/Spring2.iml" filepath="$PROJECT_DIR$/Spring2/Spring2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Spring3/Spring3.iml" filepath="$PROJECT_DIR$/Spring3/Spring3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ThreadDemo/ThreadDemo.iml" filepath="$PROJECT_DIR$/ThreadDemo/ThreadDemo.iml" />
+    </modules>
+  </component>
+</project>
