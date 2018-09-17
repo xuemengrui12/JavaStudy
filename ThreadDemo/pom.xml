@@ -10,6 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ThreadDemo</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.13.0-M4-pre-20d3c21</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

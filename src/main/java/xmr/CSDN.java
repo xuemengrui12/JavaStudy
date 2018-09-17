@@ -16,7 +16,7 @@ public class CSDN {
         //创建一个httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();
         //创建一个GET对象
-        HttpGet get = new HttpGet("https://blog.csdn.net/xuemengrui12/article/details/82084156");
+        HttpGet get = new HttpGet("https://blog.csdn.net/xuemengrui12/article/details/78273504");
         //执行请求
         try {
             for (int i = 1; i <= 1000; i++) {
