@@ -9,8 +9,9 @@ import java.util.concurrent.Executors;
 public class CachedThreadPool {
     public static void main(String[] args) {
         ExecutorService exec = Executors.newCachedThreadPool();
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 100; i++)
             exec.execute(new MyThread());
         exec.shutdown();
+
     }
 }

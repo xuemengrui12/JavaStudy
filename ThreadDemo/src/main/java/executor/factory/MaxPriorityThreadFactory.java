@@ -7,6 +7,7 @@ package executor.factory;
 import java.util.concurrent.ThreadFactory;
 
 /**
+ * 设置优先级属性
  * 最高优先级
  */
 public class MaxPriorityThreadFactory implements ThreadFactory {
