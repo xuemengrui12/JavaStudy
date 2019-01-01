@@ -26,19 +26,17 @@ public class NIOServer {
     //统计服务器线程在一个客户端花费的时间
     public static Map<Socket, Long> timeStat = new HashMap<Socket, Long>();
 
-    /*
-         * 函数功能：初始化serverSocketChannel来监听指定的端口是否有新的TCP连接，
-         * 并将serverSocketChannel注册到selector中
-         * */
+    /**
+     * 函数功能：初始化serverSocketChannel来监听指定的端口是否有新的TCP连接，
+     * 并将serverSocketChannel注册到selector中
+     */
     private void init() {
         try {
-            // selector = SelectorProvider.provider().openSelector();
-            selector = Selector.open();//获得Selector实例
             //获得服务端ServerSocketChannel
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.configureBlocking(false); //设置为非阻塞模式
             //serverSocketChannel监听指定端口
-            InetSocketAddress isa = new InetSocketAddress( 8000);
+            InetSocketAddress isa = new InetSocketAddress(8000);
             serverSocketChannel.socket().bind(isa);
 
                 /*
@@ -46,6 +44,8 @@ public class NIOServer {
                  * 注册该事件后，当事件到达的时候，selector.select()会返回，
                  * 如果事件没有到达selector.select()会一直阻塞
                  */
+            // selector = SelectorProvider.provider().openSelector();
+            selector = Selector.open();//获得Selector实例
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,24 +105,24 @@ public class NIOServer {
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
         EchoCliet echoCliet = (EchoCliet) selectionKey.attachment();
         LinkedList<ByteBuffer> outq = echoCliet.getOutq();
-        ByteBuffer bb=outq.getLast();
+        ByteBuffer bb = outq.getLast();
         try {
-            int len=socketChannel.write(bb);
-            if (len==-1){
+            int len = socketChannel.write(bb);
+            if (len == -1) {
                 socketChannel.close();
 //                selectionKey.selector().close();
                 return;
             }
-            if (bb.remaining()==0)
+            if (bb.remaining() == 0)
                 outq.removeLast();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (outq.size()==0)
+        if (outq.size() == 0)
             selectionKey.interestOps(SelectionKey.OP_READ);
     }
 
-    private void doRead(SelectionKey selectionKey)  {
+    private void doRead(SelectionKey selectionKey) {
         //先拿到这个SelectionKey里面的SocketChannel
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
@@ -171,6 +171,7 @@ public class NIOServer {
             selector.wakeup();
         }
     }
+
     class EchoCliet {
         private LinkedList<ByteBuffer> outq;
 

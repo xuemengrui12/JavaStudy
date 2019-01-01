@@ -40,7 +40,7 @@ public class AIOClient implements Runnable {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        int sleepTime = Integer.parseInt(args[0]);
+//        int sleepTime = Integer.parseInt(args[0]);
 
         AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withFixedThreadPool(Runtime.getRuntime().availableProcessors(), Executors.defaultThreadFactory());
         //只能跑一个线程，第二个线程connect会挂住，暂时不明原因
@@ -70,7 +70,7 @@ public class AIOClient implements Runnable {
         System.out.println(Thread.currentThread().getName() + "---run");
 
         //连接服务器
-        channel.connect(new InetSocketAddress("localhost", 8383), null, new CompletionHandler<Void, Void>() {
+        channel.connect(new InetSocketAddress("localhost", 8001), null, new CompletionHandler<Void, Void>() {
             final ByteBuffer readBuffer = ByteBuffer.allocateDirect(1024);
 
             @Override

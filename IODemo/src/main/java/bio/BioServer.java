@@ -8,27 +8,27 @@ import java.net.Socket;
  */
 public class BioServer {
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         int port = 8080;
-        if(args != null && args.length >0 ){
-            try{
+        if (args != null && args.length > 0) {
+            try {
                 port = Integer.valueOf(args[0]);
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
 
             }
         }
 
         ServerSocket server = null;
-        try{
+        try {
             server = new ServerSocket(port);
-            System.out.println("the bio server is start in port :"+port);
+            System.out.println("the bio server is start in port :" + port);
             Socket socket = null;
-            while (true){
+            while (true) {
                 socket = server.accept();
                 new Thread(new BioServerHandler(socket)).start();
             }
-        }finally {
-            if(server!=null){
+        } finally {
+            if (server != null) {
                 System.out.println("the bio server close");
                 server.close();
                 server = null;

@@ -48,7 +48,7 @@ public class AIOEchoServer {
         System.out.println("Server listen on " + PORT);
 
         //注册事件和事件完成后的处理器，这个CompletionHandler就是事件完成后的处理器
-        server.accept(null, new CompletionHandler<AsynchronousSocketChannel, Object>() {
+        server.accept(this, new CompletionHandler<AsynchronousSocketChannel, Object>() {
             @Override
             public void completed(AsynchronousSocketChannel result, Object attachment) {
                 System.out.println(Thread.currentThread().getName() + ": run in accept completed method");
