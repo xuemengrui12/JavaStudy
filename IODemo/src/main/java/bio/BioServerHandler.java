@@ -23,11 +23,13 @@ public class BioServerHandler implements Runnable {
             out = new PrintWriter(this.socket.getOutputStream(),true);
             String body = null;
             while(true){
+                //通过BufferedReader读取一行,如果已经读到了输入流的尾部,则返回値为null
                 body = in.readLine();
                 if(body == null){
                     break;
                 }
                 System.out.print("The bio server receive :"+body);
+                //通过PrintWriter的println函数发送数据给客户端
                 out.println(new Date());
             }
         }catch (Exception e){

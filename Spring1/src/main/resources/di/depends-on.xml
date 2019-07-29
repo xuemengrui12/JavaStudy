@@ -6,14 +6,14 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
                
     <bean id="resourceBean" 
-          class="com.spring.di.bean.ResourceBean" 
+          class="com.spring.di.bean.ResourceBean"
           init-method="init" destroy-method="destroy" lazy-init="true">
         <!--Spring容器能自动把字符串转换为java.io.File-->
         <property name="file" value="D:/test.txt"/>      
     </bean>
 
     <bean id="dependentBean" 
-          class="com.spring.di.bean.DependentBean" 
+          class="com.spring.di.bean.DependentBean"
           init-method="init" destroy-method="destroy" depends-on="resourceBean">
         <property name="resourceBean" ref="resourceBean"/>
     </bean>

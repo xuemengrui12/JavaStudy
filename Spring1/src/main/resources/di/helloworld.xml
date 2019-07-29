@@ -3,5 +3,5 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     <!-- id 表示你这个组件的名字，class表示组件类 -->
-    <bean id="hello" class="com.spring.di.HelloImpl"/>
+    <bean id="hello" class="com.spring.di.HelloImpl" primary="true"/>
 </beans>

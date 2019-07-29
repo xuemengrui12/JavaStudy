@@ -66,7 +66,7 @@ public class AIOEchoServer {
 
     }
 
-    private void handler(AsynchronousSocketChannel channel) {
+    private void handler(final AsynchronousSocketChannel channel) {
         System.out.println(Thread.currentThread().getName());
         final ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
         buffer.clear();

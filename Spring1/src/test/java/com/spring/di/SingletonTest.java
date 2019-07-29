@@ -15,7 +15,7 @@ public class SingletonTest {
         //1.创建一个ClassLoader
         ClassLoader classLoader = new SingletonClassLoader();
         //2.加载需要的类
-        Class clazz = classLoader.loadClass("com.spring.di.bean.Singleton");
+        Class clazz = classLoader.loadClass("com.spring.di.Singleton");
         //3.通过反射获取单例对象
         Method getInstance = clazz.getDeclaredMethod("getInstance");
         Object singletonObj = getInstance.invoke(clazz);
@@ -33,7 +33,7 @@ public class SingletonTest {
         //1.创建一个ClassLoader
         ClassLoader classLoader2 = new SingletonClassLoader();
         //2.加载需要的类
-        Class clazz2 = classLoader2.loadClass("com.spring.di.bean.Singleton");
+        Class clazz2 = classLoader2.loadClass("com.spring.di.Singleton");
         //3.通过反射获取单例对象
         Method getInstance2 = clazz2.getDeclaredMethod("getInstance");
         Object singletonObj2 = getInstance2.invoke(clazz2);

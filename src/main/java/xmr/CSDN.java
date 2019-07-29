@@ -30,7 +30,7 @@ public class CSDN {
 //                HttpEntity entity = response.getEntity();
 //                String string = EntityUtils.toString(entity, "utf-8");
 //                System.out.println(string);
-                System.out.println("您已经成功刷新了" + i + "次！");http://sem.tanzhouedu.com/shiguang/sheji/youxi/zb/pc/
+                System.out.println("您已经成功刷新了" + i + "次！");
                 //关闭httpclient
                 response.close();
                 Thread.sleep(1000*60);

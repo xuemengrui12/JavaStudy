@@ -20,14 +20,14 @@ public class NIOClient {
         try {
             // selector = SelectorProvider.provider().openSelector();
             selector = Selector.open();//获得Selector实例
-            SocketChannel socketChannel = SocketChannel.open();
+            SocketChannel socketChannel = SocketChannel.open();//打开通道
             socketChannel.configureBlocking(false); //设置为非阻塞模式
-            socketChannel.connect(new InetSocketAddress("localhost", 8000));
-                /*
-                 * 将socketChannel注册到selector中,并为该通道注册selectionKey.OP_CONNECT事件
-                 * 注册该事件后，当事件到达的时候，selector.select()会返回，
-                 * 如果事件没有到达selector.select()会一直阻塞
-                 */
+            socketChannel.connect(new InetSocketAddress("localhost", 8000));//进行连接
+            /*
+             * 将socketChannel注册到selector中,并为该通道注册selectionKey.OP_CONNECT事件
+             * 注册该事件后，当事件到达的时候，selector.select()会返回，
+             * 如果事件没有到达selector.select()会一直阻塞
+             */
             socketChannel.register(selector, SelectionKey.OP_CONNECT);
         } catch (IOException e) {
             e.printStackTrace();
@@ -35,7 +35,7 @@ public class NIOClient {
     }
 
     private void working() throws Exception {
-        System.out.println("cliet running....");
+        System.out.println("client running....");
         while (true) {
             if (!selector.isOpen())
                 break;
@@ -50,7 +50,7 @@ public class NIOClient {
                 iterator.remove();
                 if (selectionKey.isConnectable()) {
                     connect(selectionKey);
-                } else if (selectionKey.isValid() && selectionKey.isReadable()) {//客户端发送数据过来了
+                } else if (selectionKey.isValid() && selectionKey.isReadable()) {//服务端发送数据过来了
                     read(selectionKey);
                 }
             }
@@ -65,7 +65,7 @@ public class NIOClient {
             socketChannel.read(buffer);
             byte[] data = buffer.array();
             String msg = new String(data).trim();
-            System.out.println("msg: " + msg);
+            System.out.println("receiver msg: " + msg);
             socketChannel.close();
             selectionKey.selector().close();
         } catch (IOException e) {
@@ -73,6 +73,9 @@ public class NIOClient {
         }
     }
 
+    /**
+     * @param selectionKey
+     */
     private void connect(SelectionKey selectionKey) {
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
         try {
@@ -80,7 +83,7 @@ public class NIOClient {
                 socketChannel.finishConnect();
             socketChannel.configureBlocking(false);//设置为非阻塞模式
             //给服务器端发送数据
-            socketChannel.write(ByteBuffer.wrap(new String("hello server").getBytes()));
+            socketChannel.write(ByteBuffer.wrap("hello server".getBytes()));
             //为了接收来自服务器端的数据，将此通道注册到选择器中
             socketChannel.register(selector, SelectionKey.OP_READ);
         } catch (IOException e) {

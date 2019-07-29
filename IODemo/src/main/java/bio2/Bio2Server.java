@@ -24,7 +24,10 @@ public class Bio2Server {
             server = new ServerSocket(port);
             System.out.println("the bio2 server is start in port :"+port);
             Socket socket = null;
+            //自定义线程池
             Bio2ServerHandlerExcuterPool pool = new Bio2ServerHandlerExcuterPool(10,10);
+//            ExecutorService tp = Executors.newCachedThreadPool();
+
             while (true){
                 socket = server.accept();
                 pool.execute(new Bio2ServerHandler(socket));

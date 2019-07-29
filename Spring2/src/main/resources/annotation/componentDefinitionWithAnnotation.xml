@@ -11,13 +11,15 @@
        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
     
     <aop:aspectj-autoproxy/>
-    <context:component-scan base-package="com.spring.annotation">
-        <context:include-filter type="assignable" expression="com.spring.annotation.TestBean14"/>
-        <context:include-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect"/>
-        <context:include-filter type="regex" expression="com\.spring\.annotation\.TestBean2*"/>
-        <context:exclude-filter type="regex" expression="com\.spring\.annotation\.TestBean2*"/>
-        <context:exclude-filter type="aspectj" expression="com.spring.annotation.TestBean3*"/>
-    </context:component-scan>    
+    <context:annotation-config/>
+    <context:component-scan base-package="com.spring.annotation"/>
+<!--    <context:component-scan base-package="com.spring.annotation">-->
+<!--        <context:include-filter type="assignable" expression="cn.javass.spring.chapter12.TestBean14"/>-->
+<!--        <context:include-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect"/>-->
+<!--        <context:include-filter type="regex" expression="cn\.javass\.spring\.chapter12\.TestBean2*"/>-->
+<!--        <context:exclude-filter type="regex" expression="cn\.javass\.spring\.chapter12\.TestBean2*"/>-->
+<!--        <context:exclude-filter type="aspectj" expression="cn.javass.spring.chapter12.TestBean3*"/>-->
+<!--    </context:component-scan>    -->
 
     
 </beans>

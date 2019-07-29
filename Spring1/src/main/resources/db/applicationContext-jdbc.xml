@@ -1,13 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
-       http://www.springframework.org/schema/beans 
-       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-          
-   <bean id="abstractDao" abstract="true">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!--    读取配置文件-->
+    <context:property-placeholder location="classpath:db/mysql.properties"/>
+    <!-- 1、声明数据源对象 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <!-- 加载jdbc驱动 -->
+        <property name="driverClassName" value="${db.driver.class}"/>
+        <property name="url" value="${db.url}"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+        <property name="maxWait" value="3000"/>
+        <property name="maxActive" value="100"/>
+        <!--Druid监控-->
+        <property name="filters" value="wall,stat"/>
+    </bean>
+
+    <!--创建 JDBCTemplate对象 -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="abstractDao" abstract="true">
         <property name="dataSource" ref="dataSource"/>
-   </bean>    
-    <bean id="userDao" 
-          class="com.spring.db.dao.impl.UserJdbcDaoImpl"
-          parent="abstractDao"/>       
+    </bean>
+    <bean id="userDaoImpl"
+          class="com.spring.db.dao.impl.UserDaoImpl"
+          parent="abstractDao"/>
+    <!--直接注入dataSource-->
+    <!--    <bean id="userDaoImpl"-->
+    <!--          class="com.spring.db.dao.impl.UserDaoImpl">-->
+    <!--        <property name="dataSource" ref="dataSource"></property>-->
+    <!--    </bean>-->
+
+    <!--如果在UserDaoImpl声明了jdbcTemplate变量，则可以通过注入方式赋值-->
+    <!--    <bean id="userDaoImpl"-->
+    <!--          class="com.spring.db.dao.impl.UserDaoImpl">-->
+    <!--        <property name="jdbcTemplate" ref="jdbcTemplate"></property>-->
+    <!--    </property>-->
+    <!--    </bean>-->
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="typeAliases" value="com.mybatis3.domain.Student, com.mybatis3.domain.Tutor" />
+        <property name="typeAliasesPackage" value="com.mybatis3.domain" />
+        <property name="typeHandlers" value="com.mybatis3.typehandlers.PhoneTypeHandler" />
+        <property name="typeHandlersPackage" value="com.mybatis3.typehandlers" />
+        <property name="mapperLocations" value="classpath*:com/mybatis3/**/*.xml" />
+<!--        <property name="configLocation" value="WEB-INF/mybatisconfig.xml" />-->
+    </bean>
 </beans>

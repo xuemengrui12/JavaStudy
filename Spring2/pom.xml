@@ -16,14 +16,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--org.apache.commons 版本-->
         <pool2.version>2.4.2</pool2.version>
-        <!--redis.clients 版本-->
-        <jedis.version>2.9.0</jedis.version>
-        <!--org.fusesource.mqtt-client 版本-->
-        <mqtt-client.version>1.12</mqtt-client.version>
-        <!--org.eclipse.paho.client.mqttv3-1.1.1.jar  版本-->
-        <mqttv3.version>1.1.1</mqttv3.version>
-        <!--libthrift-0.10.0.jar 版本-->
-        <thrift.version>0.10.0</thrift.version>
         <!--fastjson 版本-->
         <fastjson.version>1.2.31</fastjson.version>
         <!--lombok版本-->
@@ -31,8 +23,6 @@
         <!--log4j日志文件管理版本-->
         <log4j.version>1.2.17</log4j.version>
         <slf4j.version>1.7.21</slf4j.version>
-        <!--kafka版本-->
-        <kafka.version>0.10.1.0</kafka.version>
         <!--junit 版本-->
         <junit.version>4.12</junit.version>
         <!--com.lmax 版本-->
@@ -40,7 +30,6 @@
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <start-class>cn.neucloud.igw.main.GuiMqttIgw</start-class>
 
     </properties>
 
@@ -181,16 +170,6 @@
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>${kafka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.10</artifactId>
-            <version>${kafka.version}</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
@@ -207,6 +186,11 @@
             <version>6.0.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.17</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -220,7 +204,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>1.5.7.RELEASE</version>
                 <configuration>
-                    <mainClass>${start-class}</mainClass>
                 </configuration>
                 <executions>
                     <execution>

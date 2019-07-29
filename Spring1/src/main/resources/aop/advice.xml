@@ -1,48 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans  xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:aop="http://www.springframework.org/schema/aop"
-        xsi:schemaLocation="
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-           
-   <bean id="helloWorldService" class="com.spring.aop.service.impl.HelloWorldService"/>
 
-   <bean id="aspect" class="com.spring.aop.HelloWorldAspect"/>
+    <bean id="helloWorldService" class="com.spring.aop.service.impl.HelloWorldService"/>
+    <!--切面支持类-->
+    <bean id="aspect" class="com.spring.aop.HelloWorldAspect"/>
 
-   <bean id="beforeAdvice" class="com.spring.aop.service.impl.BeforeAdviceImpl"/>
-    
+    <bean id="beforeAdvice" class="com.spring.aop.service.impl.BeforeAdviceImpl"/>
     <aop:config>
-        <!--<aop:advisor pointcut="execution(* com.spring..*.sayAdvisorBefore(..))"-->
-                     <!--advice-ref="beforeAdvice"/>-->
-        <!--配置前置通知-->
+        <!--Advisor表示只有一个通知和一个切入点的切面-->
+        <aop:advisor pointcut="execution(* com.spring..*.sayAdvisorBefore(..))"
+                     advice-ref="beforeAdvice"/>
+        <!--切面使用<aop:config>标签下的<aop:aspect>标签配置，其中“ref”用来引用切面支持类的方法。-->
         <aop:aspect ref="aspect">
-             <aop:before pointcut="execution(* com.spring..*.sayBefore(..)) and args(param)"
-                         method="beforeAdvice"
-                         arg-names="param"/>
-
-             <aop:after-returning pointcut="execution(* com.spring..*.sayAfterReturning(..))"
-                                  method="afterReturningAdvice"
-                                  arg-names="retVal"
-                                  returning="retVal"/>
-             <aop:after-throwing pointcut="execution(* com.spring..*.sayAfterThrowing(..))"
-                                  method="afterThrowingAdvice"
-                                  arg-names="exception"
-                                  throwing="exception"/>
-
-             <aop:after pointcut="execution(* com.spring..*.sayAfterFinally(..))"
-                       method="afterFinallyAdvice"/>
-
-             <aop:around pointcut="execution(* com.spring..*.sayAround(..))"
-                         method="aroundAdvice"/>
-
+            <!--切入点匹配-->
+            <!--配置前置通知，使用<aop:aspect>标签下的<aop:before>标签来定义，而method用来引用切面通知实现类中的方法-->
+            <aop:before pointcut="execution(* com.spring..*.sayBefore(..)) and args(param)"
+                        method="beforeAdvice"
+                        arg-names="param"/>
+            <!--后置返回通知-->
+            <aop:after-returning pointcut="execution(* com.spring..*.sayAfterReturning(..))"
+                                 method="afterReturningAdvice"
+                                 arg-names="retVal"
+                                 returning="retVal"/>
+            <!--后置异常通知-->
+            <aop:after-throwing pointcut="execution(* com.spring..*.sayAfterThrowing(..))"
+                                method="afterThrowingAdvice"
+                                arg-names="exception"
+                                throwing="exception"/>
+            <!--后置最终通知,使用pointcut-ref引入接入点，expression属性用于定义切入点方法-->
+            <aop:pointcut id="pointcut" expression="execution(* com.spring..*.sayAfterFinally(..))"/>
+            <aop:after pointcut-ref="pointcut" method="afterFinallyAdvice"/>
+            <!--环绕通知-->
+            <aop:around pointcut="execution(* com.spring..*.sayAround(..))"
+                        method="aroundAdvice"/>
+            <!-- 引入-->
             <aop:declare-parents types-matching="com.spring..*.IHelloWorldService+"
                                  implement-interface="com.spring.aop.service.IIntroductionService"
                                  default-impl="com.spring.aop.service.impl.IntroductiondService"/>
         </aop:aspect>
+
     </aop:config>
-        
-   
+
+
 </beans>

@@ -29,7 +29,6 @@ public class HelloImplTest {
      */
     @Test
     public void testSayHello() throws Exception {
-//TODO: Test goes here...
 //        System.out.println(System.getProperty("java.classpath"));
         //1、读取配置文件实例化一个IoC容器
         ApplicationContext context = new ClassPathXmlApplicationContext("di/helloworld.xml");

@@ -12,6 +12,8 @@ public class ClassTest {
         System.out.println(innerClass.getAge1());
         System.out.println(innerClass.getName1());
         System.out.println(staticInnerClass.getName2());
+
+
     }
 }
 /*只能使用default修饰*/

@@ -24,7 +24,7 @@ public class NIOServer {
     private Selector selector;
     private ExecutorService executorService = Executors.newCachedThreadPool();
     //统计服务器线程在一个客户端花费的时间
-    public static Map<Socket, Long> timeStat = new HashMap<Socket, Long>();
+    public static Map<Socket, Long> timeStat = new HashMap<>();
 
     /**
      * 函数功能：初始化serverSocketChannel来监听指定的端口是否有新的TCP连接，
@@ -32,48 +32,51 @@ public class NIOServer {
      */
     private void init() {
         try {
-            //获得服务端ServerSocketChannel
-            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.configureBlocking(false); //设置为非阻塞模式
-            //serverSocketChannel监听指定端口
-            InetSocketAddress isa = new InetSocketAddress(8000);
-            serverSocketChannel.socket().bind(isa);
-
-                /*
-                 * 将serverSocketChannel注册到selector中,并为该通道注册selectionKey.OP_ACCEPT事件
-                 * 注册该事件后，当事件到达的时候，selector.select()会返回，
-                 * 如果事件没有到达selector.select()会一直阻塞
-                 */
+            //1、创建Selector
             // selector = SelectorProvider.provider().openSelector();
             selector = Selector.open();//获得Selector实例
+            //2、通过ServerSocketChannel创建Channel通道，获得服务端ServerSocketChannel
+            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+            //3、为channel通道绑定监听端口
+            InetSocketAddress isa = new InetSocketAddress(8000);
+            serverSocketChannel.socket().bind(isa);//serverSocketChannel监听指定端口
+            //4、设置channel为非阻塞模式
+            serverSocketChannel.configureBlocking(false);
+            /*
+             * 将serverSocketChannel注册到selector中,并为该通道注册selectionKey.OP_ACCEPT事件
+             * 注册该事件后，当事件到达的时候，selector.select()会返回，
+             * 如果事件没有到达selector.select()会一直阻塞
+             */
+            //5、将channel注册到selector上，监听连接事件
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /*
+    /**
      * 函数功能：服务器端开始监听，看是否有客户端连接进来
-     * */
+     */
     private void startServer() throws Exception {
         System.out.println("server running....");
+        //6、循环等待新接入的连接
         while (true) {
             // 当注册事件到达时，方法返回，否则该方法会一直阻塞
-            selector.select();
-            // 获得selector中相应的迭代器，选中注册的事件
+            int readyChannels = selector.select(); //TODO 获取可用channel数量
+            //获取可用Channel的集合
             Set<SelectionKey> set = selector.selectedKeys();
+            //获得selector中相应的迭代器，选中注册的事件
             Iterator<SelectionKey> iterator = set.iterator();
-            long e = 0;
             while (iterator.hasNext()) {
                 SelectionKey selectionKey = iterator.next();
                 // 删除已选的key 以防重复处理
                 iterator.remove();
-                if (selectionKey.isAcceptable()) {//如果有客户端连接进来
+                //7、根据就绪状态，调用对应方法处理业务逻辑
+                if (selectionKey.isAcceptable()) {//如果是接入事件
                     doAccept(selectionKey);
-
-                } else if (selectionKey.isValid() && selectionKey.isReadable()) {//客户端发送数据过来了
+                } else if (selectionKey.isValid() && selectionKey.isReadable()) {//如果是可读事件
                     doRead(selectionKey);
-                } else if (selectionKey.isValid() && selectionKey.isWritable()) {//客户端写数据准备
+                } else if (selectionKey.isValid() && selectionKey.isWritable()) {//服务端写数据准备
                     doWrite(selectionKey);
                 }
             }
@@ -83,6 +86,13 @@ public class NIOServer {
     }
 
 
+    /**
+     * @param selectionKey
+     * @throws IOException 如果是接入事件，创建SocketChannel
+     *                     将SocketChannel设置为非阻塞模式
+     *                     将channel注册到selector上，监听可读事件
+     *                     回复客户端提示信息
+     */
     private void doAccept(SelectionKey selectionKey) throws IOException {
         //先拿到这个SelectionKey里面的ServerSocketChannel。
         ServerSocketChannel serverSocketChannel = (ServerSocketChannel) selectionKey.channel();
@@ -92,19 +102,19 @@ public class NIOServer {
         socketChannel.configureBlocking(false);//将此通道设置为非阻塞
         //为了接收客户端发送过来的数据，需要将此通道绑定到选择器上，并为该通道注册读事件
         SelectionKey clientKey = socketChannel.register(selector, SelectionKey.OP_READ);
-        EchoCliet echoCliet = new EchoCliet();
-        clientKey.attach(echoCliet);
-
+        EchoClient echoClient = new EchoClient();
+        clientKey.attach(echoClient);
+//        socketChannel.write(Charset.forName("UTF-8").encode("已经与服务建立连接"));//回复客户端提示信息
         InetAddress clientAddress = socketChannel.socket().getInetAddress();
         System.out.println("accept connection from " + clientAddress.getHostAddress());
-//        socketChannel.write(ByteBuffer.wrap(new String("hello client!").getBytes()));
+        socketChannel.write(ByteBuffer.wrap(new String("hello client!").getBytes()));
     }
 
     private void doWrite(SelectionKey selectionKey) {
-//先拿到这个SelectionKey里面的SocketChannel
+        //先拿到这个SelectionKey里面的SocketChannel
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
-        EchoCliet echoCliet = (EchoCliet) selectionKey.attachment();
-        LinkedList<ByteBuffer> outq = echoCliet.getOutq();
+        EchoClient echoClient = (EchoClient) selectionKey.attachment();
+        LinkedList<ByteBuffer> outq = echoClient.getOutq();
         ByteBuffer bb = outq.getLast();
         try {
             int len = socketChannel.write(bb);
@@ -122,6 +132,14 @@ public class NIOServer {
             selectionKey.interestOps(SelectionKey.OP_READ);
     }
 
+    /**
+     * @param selectionKey 可读事件处理器
+     *                     要从selectionKey中获取到已经就绪的channel
+     *                     创建buffer
+     *                     循环读取客户端请求信息
+     *                     将channel再次注册到selector上，监听他的可读事件
+     *                     将客户端发送的请求信息，广播给其他客户端
+     */
     private void doRead(SelectionKey selectionKey) {
         //先拿到这个SelectionKey里面的SocketChannel
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
@@ -138,7 +156,7 @@ public class NIOServer {
 //                selectionKey.selector().close();
                 return;
             }
-            buf.flip();
+            buf.flip();//切换buf为读模式
             // 使用GBK的字符集来创建解码器
             Charset charset = Charset.forName("utf-8");
             // 创建解码器(CharsetDecoder)对象
@@ -165,19 +183,18 @@ public class NIOServer {
         }
 
         public void run() {
-            EchoCliet echoCliet = (EchoCliet) selectionKey.attachment();
+            EchoClient echoCliet = (EchoClient) selectionKey.attachment();
             echoCliet.enqueue(bb);
             selectionKey.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
             selector.wakeup();
         }
     }
 
-    class EchoCliet {
+    class EchoClient {
         private LinkedList<ByteBuffer> outq;
 
-        public EchoCliet() {
-            outq = new LinkedList<ByteBuffer>();
-
+        public EchoClient() {
+            outq = new LinkedList<>();
         }
 
         public LinkedList<ByteBuffer> getOutq() {

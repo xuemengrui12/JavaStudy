@@ -8,8 +8,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class AopTest {
-    
 
+
+    /**
+     * 前置通知
+     */
     @Test
     public void testSchemaBeforeAdvice() {
         System.out.println("======================================");
@@ -19,6 +22,9 @@ public class AopTest {
         System.out.println("======================================");
     }
 
+    /**
+     * 后置返回通知
+     */
     @Test
     public void testSchemaAfterReturningAdvice() {
         System.out.println("======================================");
@@ -37,6 +43,9 @@ public class AopTest {
         System.out.println("======================================");
     }
 
+    /**
+     * 后置最终通知
+     */
     @Test(expected = RuntimeException.class)
     public void testSchemaAfterFinallyAdvice() {
         System.out.println("======================================");
@@ -74,59 +83,6 @@ public class AopTest {
     }
     
 
-    @Test
-    public void testAnnotationBeforeAdvice() {
-        System.out.println("======================================");
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("aop/advice2.xml");
-        IHelloWorldService helloworldService = ctx.getBean("helloWorldService", IHelloWorldService.class);
-        helloworldService.sayBefore("before");
-        System.out.println("======================================");
-    }
-    
-    @Test
-    public void testAnnotationAfterReturningAdvice() {
-        System.out.println("======================================");
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("aop/advice2.xml");
-        IHelloWorldService helloworldService = ctx.getBean("helloWorldService", IHelloWorldService.class);
-        helloworldService.sayAfterReturning();
-        System.out.println("======================================");
-    }
-    
-   @Test(expected = RuntimeException.class)
-    public void testAnnotationAfterThrowingAdvice() {
-        System.out.println("======================================");
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("aop/advice2.xml");
-        IHelloWorldService helloworldService = ctx.getBean("helloWorldService", IHelloWorldService.class);
-        helloworldService.sayAfterThrowing();
-        System.out.println("======================================");
-    }
-    @Test(expected = RuntimeException.class)
-    public void testAnnotationAfterFinallyAdvice() {
-        System.out.println("======================================");
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("aop/advice2.xml");
-        IHelloWorldService helloworldService = ctx.getBean("helloWorldService", IHelloWorldService.class);
-        helloworldService.sayAfterFinally();
-        System.out.println("======================================");
-    }
 
-    @Test
-    public void testAnnotationAroundAdvice() {
-        System.out.println("======================================");
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("aop/advice2.xml");
-        IHelloWorldService helloworldService = ctx.getBean("helloWorldService", IHelloWorldService.class);
-        helloworldService.sayAround("haha");
-        System.out.println("======================================");
-    }
-    
-    @Test
-    public void testAnnotationIntroduction() {
-        System.out.println("======================================");
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("aop/advice2.xml");
-        IIntroductionService introductionService = ctx.getBean("helloWorldService", IIntroductionService.class);
-        introductionService.induct();
-        System.out.println("======================================");
-    }
-    
-    
 
 }

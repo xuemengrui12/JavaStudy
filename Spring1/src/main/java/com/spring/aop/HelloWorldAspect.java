@@ -3,6 +3,7 @@ package com.spring.aop;
 import org.aspectj.lang.ProceedingJoinPoint;
 
 /**
+ * 切面支持类
  * Created by xmr on 2018/3/20.
  */
 public class HelloWorldAspect {
@@ -33,4 +34,7 @@ public class HelloWorldAspect {
         System.out.println("===========around after advice");
         return retVal;
     }
+
+//    public void before(JoinPoint joinPoint) throws Throwable {
+//    }
 }

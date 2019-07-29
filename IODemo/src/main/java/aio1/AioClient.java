@@ -40,7 +40,7 @@ public class AioClient implements CompletionHandler<Void, AioClient> {
     @Override
     public void completed(Void result, AioClient attachment) {
         byte[] bytes = "hello world".getBytes();
-        ByteBuffer writeBuffer = ByteBuffer.allocate(bytes.length);
+        final ByteBuffer writeBuffer = ByteBuffer.allocate(bytes.length);
         writeBuffer.put(bytes);
         writeBuffer.flip();
         socketChannel.write(writeBuffer, writeBuffer, new CompletionHandler<Integer, ByteBuffer>() {

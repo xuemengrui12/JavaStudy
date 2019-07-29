@@ -10,16 +10,16 @@ import java.util.concurrent.TimeUnit;
 /**
  */
 public class HsHttpRequest {
-    private String[] url = {"https://blog.csdn.net/xuemengrui12/article/details/82709208"
-            , "https://blog.csdn.net/xuemengrui12/article/details/82707473"
-            , "https://blog.csdn.net/xuemengrui12/article/details/83718055"
+    private String[] url = {"https://blog.csdn.net/xuemengrui12/article/details/78530594"
+            , "https://blog.csdn.net/xuemengrui12/article/details/83963011"
+            , "https://blog.csdn.net/xuemengrui12/article/details/82455304"
             , "https://blog.csdn.net/xuemengrui12/article/details/83718269"
-            , "https://blog.csdn.net/xuemengrui12/article/details/83961900"
-            , "https://blog.csdn.net/xuemengrui12/article/details/74984731"
+            , "https://blog.csdn.net/xuemengrui12/article/details/82707342"
+            , "https://blog.csdn.net/xuemengrui12/article/details/80869241"
             , "https://blog.csdn.net/xuemengrui12/article/details/81365018"
             , "https://blog.csdn.net/xuemengrui12/article/details/82708326"
             , "https://blog.csdn.net/xuemengrui12/article/details/81364137"
-            , "https://blog.csdn.net/xuemengrui12/article/details/80160419"
+            , "https://blog.csdn.net/xuemengrui12/article/details/82707342"
             , "https://blog.csdn.net/xuemengrui12/article/details/79997036"};
 
     OkHttpClient client = new OkHttpClient();

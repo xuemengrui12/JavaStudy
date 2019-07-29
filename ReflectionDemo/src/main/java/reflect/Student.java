@@ -27,26 +27,30 @@ public class Student {
     Student(String str) {
         System.out.println("(默认)的构造方法 str = " + str);
     }
+
     //无参构造函数
     public Student() {
     }
+
     //有一个参数的构造函数
     public Student(double age) {
         System.out.println("年龄：" + age);
     }
+
     //有多个参数的构造函数
     public Student(int age, String name) {
         this.age = age;
         this.name = name;
     }
+
     //受保护的构造函数
-    protected Student(byte n){
+    protected Student(byte n) {
         System.out.println("受保护的构造方法 n = " + n);
     }
 
     //私有构造函数
-    private Student(int age){
-        System.out.println("私有的构造方法，年龄："+ age);
+    private Student(int age) {
+        System.out.println("私有的构造方法，年龄：" + age);
     }
 
     @Override
@@ -57,22 +61,5 @@ public class Student {
                 '}';
     }
 
-    public static void main(String[] args) {
-        Class<?> demo = null;
-        try {
-            demo = Class.forName("reflect.Student");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        Student student = null;
-        try {
-            student = (Student) demo.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        student.setAge(28);
-        System.out.println(student);
-    }
+
 }

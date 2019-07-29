@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans  xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:aop="http://www.springframework.org/schema/aop"
-        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-   
-   <aop:aspectj-autoproxy/>        
-   
-   <bean id="helloWorldService" class="com.spring.aop.service.impl.HelloWorldService"/>
 
-   <bean id="pointcutService" class="com.spring.aop.service.impl.PointcutService"/>
 
-   <bean id="aspect" class="com.spring.aop.ParameterAspect"/>
+    <bean id="helloWorldService" class="com.spring.aop.service.impl.HelloWorldService"/>
 
-        
-   
+    <bean id="pointcutService" class="com.spring.aop.service.impl.PointcutService"/>
+
+    <bean id="aspect" class="com.spring.aop.ParameterAspect"/>
+
+    <aop:config>
+        <aop:pointcut id="point" expression="execution(* sayBefore(*))"/>
+        <aop:pointcut id="point1" expression="args(param)"/>
+        <aop:pointcut id="point2" expression="@annotation(secure)"/>
+        <aop:aspect ref="aspect">
+            <!--            <aop:before pointcut-ref="point" method="before" arg-names="jp"/>-->
+            <!--            <aop:before pointcut-ref="point" method="before" arg-names="jp"/>-->
+            <!--声明切入点方法和参数，切面方法和参数-->
+            <aop:before pointcut="execution(* test(*)) and args(param)" method="before1" arg-names="param"/>
+            <!--            声明切入点方法和参数，切面方法-->
+            <aop:before pointcut="execution(* test(*)) and args(param)" method="before2"/>
+            <!--声明切入点参数，切面方法和参数-->
+            <aop:before pointcut="args(param)" method="before3" arg-names="param"/>
+            <!--声明切入点参数，切面方法和参数(包含JoinPoint)-->
+            <aop:before method="before4" pointcut="args(param)" arg-names="jp,param"/>
+            <!--声明切入点参数，切面方法和多个参数(包含JoinPoint)-->
+            <aop:before method="before5" pointcut="args(param) and target(pointcutService) and @annotation(secure)"
+                        arg-names="jp,param,pointcutService,secure"/>
+        </aop:aspect>
+    </aop:config>
 </beans>

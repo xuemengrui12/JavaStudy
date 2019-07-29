@@ -7,6 +7,7 @@ import com.spring.aop.service.IHelloWorldService;
  */
 public class HelloWorldService implements IHelloWorldService {
 
+
     //前置通知
     @Override
     public void sayBefore(String param) {
@@ -33,12 +34,14 @@ public class HelloWorldService implements IHelloWorldService {
         System.out.println("============before finally");
         throw new RuntimeException();
     }
+
     //环绕通知
     @Override
     public void sayAround(String param) {
         System.out.println("============around param:" + param);
     }
 
+    //引入
     @Override
     public void sayAdvisorBefore(String param) {
         System.out.println("say============ " + param);

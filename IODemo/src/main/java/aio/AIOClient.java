@@ -59,7 +59,7 @@ public class AIOClient implements Runnable {
         }
 
         latch.await();
-
+String s;
         if (channelGroup != null) {
             channelGroup.shutdown();
         }

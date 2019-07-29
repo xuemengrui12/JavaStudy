@@ -6,6 +6,9 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
+/**
+ * 测试Bean的命名
+ */
 public class NamingBeanTest {
     
     @Test

@@ -13,7 +13,7 @@
           autowire="byType"/>
 
     <bean id="listBean" 
-          class="com.spring.di.bean.ListBean" 
+          class="com.spring.di.bean.ListBean"
           autowire="byType"/>
     
 </beans>
