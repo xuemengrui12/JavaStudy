@@ -3,7 +3,6 @@ package nio;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.SelectionKey;
@@ -12,7 +11,9 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,13 +25,15 @@ public class NIOServer {
     private Selector selector;
     private ExecutorService executorService = Executors.newCachedThreadPool();
     //统计服务器线程在一个客户端花费的时间
-    public static Map<Socket, Long> timeStat = new HashMap<>();
+
+
 
     /**
-     * 函数功能：初始化serverSocketChannel来监听指定的端口是否有新的TCP连接，
+     * 初始化serverSocketChannel来监听指定的端口是否有新的TCP连接，
      * 并将serverSocketChannel注册到selector中
+     * 函数功能：服务器端开始监听，看是否有客户端连接进来
      */
-    private void init() {
+    private void startServer() throws Exception {
         try {
             //1、创建Selector
             // selector = SelectorProvider.provider().openSelector();
@@ -38,8 +41,7 @@ public class NIOServer {
             //2、通过ServerSocketChannel创建Channel通道，获得服务端ServerSocketChannel
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
             //3、为channel通道绑定监听端口
-            InetSocketAddress isa = new InetSocketAddress(8000);
-            serverSocketChannel.socket().bind(isa);//serverSocketChannel监听指定端口
+            serverSocketChannel.socket().bind(new InetSocketAddress(8000));//serverSocketChannel监听指定端口
             //4、设置channel为非阻塞模式
             serverSocketChannel.configureBlocking(false);
             /*
@@ -52,17 +54,13 @@ public class NIOServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * 函数功能：服务器端开始监听，看是否有客户端连接进来
-     */
-    private void startServer() throws Exception {
         System.out.println("server running....");
-        //6、循环等待新接入的连接
+        //6、循环等待新接入的连接,for(;;)经过代码优化是一条语句，while（true）是3条
         while (true) {
             // 当注册事件到达时，方法返回，否则该方法会一直阻塞
             int readyChannels = selector.select(); //TODO 获取可用channel数量
+            if (readyChannels == 0)
+                continue;
             //获取可用Channel的集合
             Set<SelectionKey> set = selector.selectedKeys();
             //获得selector中相应的迭代器，选中注册的事件
@@ -72,13 +70,17 @@ public class NIOServer {
                 // 删除已选的key 以防重复处理
                 iterator.remove();
                 //7、根据就绪状态，调用对应方法处理业务逻辑
-                if (selectionKey.isAcceptable()) {//如果是接入事件
-                    doAccept(selectionKey);
-                } else if (selectionKey.isValid() && selectionKey.isReadable()) {//如果是可读事件
-                    doRead(selectionKey);
-                } else if (selectionKey.isValid() && selectionKey.isWritable()) {//服务端写数据准备
-                    doWrite(selectionKey);
+                if (selectionKey.isValid()) {
+                    if (selectionKey.isAcceptable()) {//如果是接入事件
+                        doAccept(selectionKey);
+                    } else if (selectionKey.isReadable()) {//如果是可读事件
+                        doRead(selectionKey);
+                    }
+//                    if (selectionKey.isWritable()) {//服务端写数据准备
+//                    doWrite(selectionKey);
+//                    }
                 }
+
             }
 
         }
@@ -101,13 +103,13 @@ public class NIOServer {
         System.out.println("有客户端连接到服务器！！！");
         socketChannel.configureBlocking(false);//将此通道设置为非阻塞
         //为了接收客户端发送过来的数据，需要将此通道绑定到选择器上，并为该通道注册读事件
-        SelectionKey clientKey = socketChannel.register(selector, SelectionKey.OP_READ);
-        EchoClient echoClient = new EchoClient();
-        clientKey.attach(echoClient);
+        SelectionKey clientKey = socketChannel.register(selector, SelectionKey.OP_READ);//可读事件
+//        EchoClient echoClient = new EchoClient();
+//        clientKey.attach(echoClient);
 //        socketChannel.write(Charset.forName("UTF-8").encode("已经与服务建立连接"));//回复客户端提示信息
         InetAddress clientAddress = socketChannel.socket().getInetAddress();
         System.out.println("accept connection from " + clientAddress.getHostAddress());
-        socketChannel.write(ByteBuffer.wrap(new String("hello client!").getBytes()));
+        socketChannel.write(ByteBuffer.wrap("hello client!".getBytes()));
     }
 
     private void doWrite(SelectionKey selectionKey) {
@@ -117,7 +119,9 @@ public class NIOServer {
         LinkedList<ByteBuffer> outq = echoClient.getOutq();
         ByteBuffer bb = outq.getLast();
         try {
-            int len = socketChannel.write(bb);
+            int len = socketChannel.write(ByteBuffer.wrap(new String("hello client!!!").getBytes()));
+
+//            int len = socketChannel.write(bb);
             if (len == -1) {
                 socketChannel.close();
 //                selectionKey.selector().close();
@@ -170,7 +174,7 @@ public class NIOServer {
             e.printStackTrace();
         }
 
-        executorService.execute(new HandleMsg(selectionKey, buf));
+//        executorService.execute(new HandleMsg(selectionKey, buf));
     }
 
     class HandleMsg implements Runnable {
@@ -208,7 +212,6 @@ public class NIOServer {
 
     public static void main(String[] args) throws Exception {
         NIOServer server = new NIOServer();
-        server.init();
         server.startServer();
     }
 }

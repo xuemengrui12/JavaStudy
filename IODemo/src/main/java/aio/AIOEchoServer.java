@@ -20,7 +20,6 @@ import java.util.concurrent.Executors;
  */
 public class AIOEchoServer {
     private final static int PORT = 8001;
-    private final static String IP = "127.0.0.1";
 
     private boolean writing = false;
     private AsynchronousServerSocketChannel server = null;

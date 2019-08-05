@@ -1,0 +1,42 @@
+package xmr.cp;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+/**
+ * Created by xmr on 2019/8/3.
+ */
+public class Main {
+    public static void main(String[] args) {
+        Queue<Object> queue = new LinkedList<>();
+        int maxSize = 5;
+        Producer p = new Producer(queue, maxSize);
+        Consumer c = new Consumer(queue, maxSize);
+        p.put(1);
+        p.put(2);
+        p.put(3);
+        p.put(4);
+        p.put(5);
+        Thread pT = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                p.put(6);
+                p.put(7);
+            }
+        });
+        pT.start();
+        Thread pC = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                c.get();
+
+            }
+        });
+        pC.start();
+        new Thread() {
+            public void run() {
+                c.get();
+            }
+        }.start();
+    }
+}

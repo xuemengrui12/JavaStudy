@@ -9,14 +9,14 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>ThreadDemo</module>
         <module>ReflectionDemo</module>
         <module>Spring1</module>
         <module>Spring1.5</module>
         <module>Spring2</module>
         <module>Spring3</module>
         <module>IODemo</module>
-        <module>ConcurrentDemo</module>
+        <module>JUCDemo</module>
+        <module>AMQPDemo</module>
 
     </modules>
 
