@@ -14,8 +14,8 @@ import java.lang.reflect.Method;
 /**
  * ÇÐÃæ
  */
-@Aspect //1
-@Component //2
+@Aspect //
+@Component //
 public class LogAspect {
 	
 	@Pointcut("@annotation(com.spring.aop.Action)") //3

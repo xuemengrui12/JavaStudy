@@ -1,5 +1,8 @@
 package xmr;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by xmr on 2018/6/22.
  */
@@ -10,6 +13,7 @@ public class Test {
         Test t2=t1;
         t1.a=20;
         t1=null;
+        List<String> list=new ArrayList<>();
         String a=new String("ass");
         String b=new String("ass");
         System.out.println(a.equals(b));

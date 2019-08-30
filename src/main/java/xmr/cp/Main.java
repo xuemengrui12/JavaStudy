@@ -10,8 +10,8 @@ public class Main {
     public static void main(String[] args) {
         Queue<Object> queue = new LinkedList<>();
         int maxSize = 5;
-        Producer p = new Producer(queue, maxSize);
-        Consumer c = new Consumer(queue, maxSize);
+        final Producer p = new Producer(queue, maxSize);
+        final Consumer c = new Consumer(queue, maxSize);
         p.put(1);
         p.put(2);
         p.put(3);
