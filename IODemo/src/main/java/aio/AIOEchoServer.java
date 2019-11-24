@@ -2,190 +2,101 @@ package aio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Created by xmr on 2018/9/18.
  */
-public class AIOEchoServer {
-    private final static int PORT = 8001;
+public class AIOEchoServer implements Runnable{
+    public final static int PORT = 8001;
+    public final static String IP = "127.0.0.1";
 
-    private boolean writing = false;
+
     private AsynchronousServerSocketChannel server = null;
-
-    private final Queue<ByteBuffer> queue = new LinkedList<>();
-
 
     public AIOEchoServer() {
         try {
             ExecutorService executor = Executors.newFixedThreadPool(20);
-//            AsynchronousChannelGroup channelGroup
-//                    = AsynchronousChannelGroup.withFixedThreadPool(
-//                            Runtime.getRuntime().availableProcessors(), Executors.defaultThreadFactory());
             AsynchronousChannelGroup asyncChannelGroup = AsynchronousChannelGroup.withThreadPool(executor);
-            server = AsynchronousServerSocketChannel.open(asyncChannelGroup).bind(new InetSocketAddress(PORT));
+            server = AsynchronousServerSocketChannel.open(asyncChannelGroup).bind(new InetSocketAddress(IP, PORT));
             //同样是利用工厂方法产生一个通道，异步通道 AsynchronousServerSocketChannel
-//            server = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(PORT));
+//            server = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(IP,PORT));
+            //通过setOption配置Socket
+            server.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+            server.setOption(StandardSocketOptions.SO_RCVBUF, 16 * 1024);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     //使用这个通道(server)来进行客户端的接收和处理
-    public void start() {
+    @Override
+    public void run() {
         System.out.println("Server listen on " + PORT);
 
         //注册事件和事件完成后的处理器，这个CompletionHandler就是事件完成后的处理器
-        server.accept(this, new CompletionHandler<AsynchronousSocketChannel, Object>() {
+        server.accept(null, new CompletionHandler<AsynchronousSocketChannel, Object>() {
+
+            final ByteBuffer buffer = ByteBuffer.allocate(1024);
+
             @Override
             public void completed(AsynchronousSocketChannel result, Object attachment) {
-                System.out.println(Thread.currentThread().getName() + ": run in accept completed method");
 
-                server.accept(null, this);
-                handler(result);
-            }
+                System.out.println(Thread.currentThread().getName());
+                Future<Integer> writeResult = null;
 
-            @Override
-            public void failed(Throwable exc, Object attachment) {
-                System.out.println("server accept failed: " + exc);
+                try {
+                    buffer.clear();
+                    //把socket中的数据读取到buffer中
+                    result.read(buffer).get(100, TimeUnit.SECONDS);
 
-            }
-        });
+                    System.out.println("In server: " + new String(buffer.array()));
 
-    }
-
-    private void handler(final AsynchronousSocketChannel channel) {
-        System.out.println(Thread.currentThread().getName());
-        final ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
-        buffer.clear();
-        channel.read(buffer, null, new CompletionHandler<Integer, Object>() {
-            @Override
-            public void completed(Integer result, Object attachment) {
-                System.out.println(Thread.currentThread().getName()
-                        + ": run in read completed method");
-                if (result > 0) {
+                    buffer.flip();
+                    //将数据写回客户端
+                    writeResult = result.write(buffer);
+                    buffer.flip();
+                } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                    e.printStackTrace();
+                } finally {
                     try {
-                        buffer.flip();
-                        //CharBuffer charBuffer = CharsetHelper.decode(readBuffer);
-                        CharBuffer charBuffer = Charset.forName("UTF-8").newDecoder().decode(buffer);
-                        String question = charBuffer.toString();
-//                        String answer = Helper.getAnswer(question);
-                        writeStringMessage(channel, question);
-
-                        buffer.clear();
-                    } catch (CharacterCodingException e) {
+                        System.out.println(writeResult.get());
+                        //关闭处理完的socket，并重新调用accept等待新的连接
+                        result.close();
+                        server.accept(null, this);
+                    } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
-                    }
-                } else {
-                    try {
-                        //如果客户端关闭socket，那么服务器也需要关闭，否则浪费CPU
-                        channel.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                //异步调用OS处理下个读取请求
-                //这里传入this是个地雷，小心多线程
-                channel.read(buffer, null, this);
-            }
-
-            @Override
-            public void failed(Throwable exc, Object attachment) {
-                System.out.println("server read failed: " + exc);
-                if (channel != null) {
-                    try {
-                        channel.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
 
             }
-        });
-    }
-
-    private void writeMessage(final AsynchronousSocketChannel channel, final ByteBuffer buffer) {
-        boolean threadShouldWrite = false;
-
-        synchronized(queue) {
-            queue.add(buffer);
-            // Currently no thread writing, make this thread dispatch a write
-            if (!writing) {
-                writing = true;
-                threadShouldWrite = true;
-            }
-        }
-
-        if (threadShouldWrite) {
-            writeFromQueue(channel);
-        }
-    }
-
-    private void writeFromQueue(final AsynchronousSocketChannel channel) {
-        ByteBuffer buffer;
-
-        synchronized (queue) {
-            buffer = queue.poll();
-            if (buffer == null) {
-                writing = false;
-            }
-        }
-
-        // No new data in buffer to write
-        if (writing) {
-            writeBuffer(channel, buffer);
-        }
-    }
-
-    private void writeBuffer(final AsynchronousSocketChannel channel, ByteBuffer buffer) {
-        channel.write(buffer, buffer, new CompletionHandler<Integer, ByteBuffer>() {
-            @Override
-            public void completed(Integer result, ByteBuffer buffer) {
-                if (buffer.hasRemaining()) {
-                    channel.write(buffer, buffer, this);
-                } else {
-                    // Go back and check if there is new data to write
-                    writeFromQueue(channel);
-                }
-            }
 
             @Override
-            public void failed(Throwable exc, ByteBuffer attachment) {
-                System.out.println("server write failed: " + exc);
+            public void failed(Throwable exc, Object attachment) {
+                System.out.println("failed:" + exc);
             }
+
         });
     }
-
-    /**
-     * Sends a message
-     * @param msg
-     * @throws CharacterCodingException
-     */
-    private void writeStringMessage(final AsynchronousSocketChannel channel, String msg) throws CharacterCodingException {
-        writeMessage(channel, Charset.forName("UTF-8").newEncoder().encode(CharBuffer.wrap(msg)));
-    }
-
 
     public static void main(String[] args) {
-        new AIOEchoServer().start();
-//        while (true) {
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        //因为AIO不会阻塞调用进程，因此必须在主进程阻塞，才能保持进程存活。
+        new Thread(new AIOEchoServer()).start();
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

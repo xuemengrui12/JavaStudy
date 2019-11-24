@@ -15,6 +15,7 @@ public class BioServerHandler implements Runnable {
     public BioServerHandler(Socket socket) {
         this.socket = socket;
     }
+    @Override
     public void run(){
         BufferedReader in = null;
         PrintWriter out = null;

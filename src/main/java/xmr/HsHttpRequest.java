@@ -10,17 +10,17 @@ import java.util.concurrent.TimeUnit;
 /**
  */
 public class HsHttpRequest {
-    private String[] url = {"https://blog.csdn.net/xuemengrui12/article/details/78530594"
-            , "https://blog.csdn.net/xuemengrui12/article/details/82709208"
-            , "https://blog.csdn.net/xuemengrui12/article/details/83718678"
+    private String[] url = {"https://blog.csdn.net/xuemengrui12/article/details/101125403"
+            , "https://blog.csdn.net/xuemengrui12/article/details/101123530"
+            , "https://blog.csdn.net/xuemengrui12/article/details/101123208"
             , "https://blog.csdn.net/xuemengrui12/article/details/87906861"
-            , "https://blog.csdn.net/xuemengrui12/article/details/82457514"
+            , "https://blog.csdn.net/xuemengrui12/article/details/100178062"
             , "https://blog.csdn.net/xuemengrui12/article/details/82454910"
             , "https://blog.csdn.net/xuemengrui12/article/details/81104953"
-            , "https://blog.csdn.net/xuemengrui12/article/details/82708326"
-            , "https://blog.csdn.net/xuemengrui12/article/details/98783715"
+            , "https://blog.csdn.net/xuemengrui12/article/details/100178062"
+            , "https://blog.csdn.net/xuemengrui12/article/details/81104953"
             , "https://blog.csdn.net/xuemengrui12/article/details/82707342"
-            , "https://blog.csdn.net/xuemengrui12/article/details/79997036"};
+            , "https://blog.csdn.net/xuemengrui12/article/details/81104953"};
 
     OkHttpClient client = new OkHttpClient();
     Random random = new Random();
@@ -45,10 +45,12 @@ public class HsHttpRequest {
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
+            @Override
             public void onFailure(Call call, IOException e) {
 
             }
 
+            @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     System.out.println("success");

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
+ * 手写生产者消费者模式
  * Created by xmr on 2019/8/3.
  */
 public class Main {

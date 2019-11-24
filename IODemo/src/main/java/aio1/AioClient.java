@@ -18,23 +18,17 @@ public class AioClient implements CompletionHandler<Void, AioClient> {
     public void start() {
         try {
             socketChannel = AsynchronousSocketChannel.open();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        latch = new CountDownLatch(1);
-        socketChannel.connect(new InetSocketAddress("127.0.0.1", 8080), this, this);
-
-        try {
+            latch = new CountDownLatch(1);
+            socketChannel.connect(new InetSocketAddress("127.0.0.1", 8080), this, this);
             latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
             socketChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
     }
 
     @Override

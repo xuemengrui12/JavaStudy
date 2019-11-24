@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
  */
 public class StudentTest {
     public static void main(String[] args) throws Throwable {
+
         Class<?> demo = null;
         try {
             demo = Class.forName("reflect.Student");

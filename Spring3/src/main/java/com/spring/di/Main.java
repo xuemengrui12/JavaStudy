@@ -13,7 +13,7 @@ public class Main {
 		 UseFunctionService useFunctionService = context.getBean(UseFunctionService.class); //2
 		 
 		 System.out.println(useFunctionService.sayHello("world"));
-		 
-		 context.close();
+
+		context.close();
 	}
 }

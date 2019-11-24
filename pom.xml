@@ -29,6 +29,8 @@
         <module>IODemo</module>
         <module>JUCDemo</module>
         <module>AMQPDemo</module>
+        <module>DesignPattern</module>
+        <module>SerializableDemo</module>
 
     </modules>
 

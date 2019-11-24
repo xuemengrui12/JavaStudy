@@ -21,18 +21,19 @@ public class ExecFromFactory {
                 .newCachedThreadPool(new MaxPriorityThreadFactory());
         ExecutorService minPriorityExec = Executors
                 .newCachedThreadPool(new MinPriorityThreadFactory());
-        MyThread t=new MyThread();
+        MyThread t = new MyThread();
         for (int i = 0; i < 10; i++) {
-            if (i == 1)
+            if (i == 1) {
                 defaultExec.execute(t);
-            else if (i == 3)
+            } else if (i == 3) {
                 daemonExec.execute(t);
-            else if (i == 5)
+            } else if (i == 5) {
                 maxPriorityExec.execute(t);
-            else if (i == 7)
+            } else if (i == 7) {
                 minPriorityExec.execute(t);
-            else
+            } else {
                 executorService.execute(t);
+            }
         }
     }
 }
