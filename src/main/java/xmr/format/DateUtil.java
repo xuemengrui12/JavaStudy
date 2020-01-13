@@ -15,7 +15,6 @@ public class DateUtil {
     }
 
     public static Date parse(String strDate) throws ParseException {
-
         return sdf.parse(strDate);
     }
 }
