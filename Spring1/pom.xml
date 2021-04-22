@@ -37,7 +37,7 @@
         <!--com.lmax 版本-->
         <disruptor.version>3.3.2</disruptor.version>
         <java.version>1.8</java.version>
-        <mybatis.version>3.4.5</mybatis.version>
+        <mybatis.version>3.5.6</mybatis.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
